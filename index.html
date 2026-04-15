@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stoneboat Quay — Modernization Project</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  :root{
+    --navy:#0b2545; --deep:#13315c; --harbor:#1d4e89; --rope:#c9a66b;
+    --sand:#f4efe6; --foam:#e8eef5; --ink:#07172c; --accent:#d4b37a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Georgia','Times New Roman',serif;color:var(--ink);background:var(--sand);line-height:1.6}
+  h1,h2,h3,h4{font-family:'Helvetica Neue',Arial,sans-serif;letter-spacing:.02em}
+
+  /* Nav */
+  nav.top{position:sticky;top:0;z-index:50;background:var(--navy);color:var(--foam);padding:.8rem 2rem;display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid var(--rope);box-shadow:0 2px 8px rgba(0,0,0,.2)}
+  nav.top .brand{display:flex;align-items:center;gap:.8rem;font-weight:700;font-size:1.1rem;letter-spacing:.15em;text-transform:uppercase}
+  nav.top ul{list-style:none;display:flex;gap:1.4rem;flex-wrap:wrap}
+  nav.top a{color:var(--foam);text-decoration:none;font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;font-family:'Helvetica Neue',Arial,sans-serif;transition:color .2s}
+  nav.top a:hover{color:var(--rope)}
+  .anchor-logo{width:32px;height:32px;stroke:var(--rope);fill:none;stroke-width:2}
+
+  /* Slide-style sections */
+  section.slide{min-height:90vh;padding:5rem 2rem;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
+  section .container{max-width:1100px;margin:0 auto;width:100%}
+
+  /* Hero */
+  .hero{background:linear-gradient(135deg,var(--navy) 0%,var(--harbor) 100%);color:var(--foam);text-align:center;border-bottom:4px solid var(--rope)}
+  .hero::before{content:"";position:absolute;inset:0;background-image:
+    radial-gradient(circle at 20% 30%, rgba(201,166,107,.15), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(232,238,245,.08), transparent 40%);}
+  .hero h1{font-size:clamp(2.2rem,5vw,4rem);font-weight:300;margin-bottom:.6rem;position:relative}
+  .hero .tag{font-size:1.1rem;letter-spacing:.25em;text-transform:uppercase;color:var(--rope);margin-bottom:2rem;position:relative}
+  .hero .sub{font-size:1.3rem;max-width:700px;margin:0 auto 2rem;position:relative;font-style:italic}
+  .hero .address{font-size:.95rem;opacity:.85;letter-spacing:.2em;text-transform:uppercase;position:relative}
+  .wave-divider{position:absolute;bottom:0;left:0;width:100%;height:60px}
+
+  /* Section backgrounds alternating */
+  .bg-sand{background:var(--sand)}
+  .bg-foam{background:var(--foam)}
+  .bg-navy{background:var(--navy);color:var(--foam)}
+  .bg-navy h2,.bg-navy h3{color:var(--rope)}
+
+  h2.section-title{font-size:clamp(1.8rem,3vw,2.6rem);font-weight:300;margin-bottom:.4rem;color:var(--navy)}
+  .bg-navy h2.section-title{color:var(--rope)}
+  .eyebrow{font-size:.8rem;letter-spacing:.3em;text-transform:uppercase;color:var(--harbor);margin-bottom:.5rem;font-family:'Helvetica Neue',Arial,sans-serif}
+  .bg-navy .eyebrow{color:var(--rope)}
+  .rule{width:60px;height:3px;background:var(--rope);margin:1rem 0 2rem}
+
+  /* Grid layouts */
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:center}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}
+  @media(max-width:800px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+
+  /* Cards */
+  .card{background:#fff;padding:1.8rem;border-radius:4px;box-shadow:0 4px 14px rgba(11,37,69,.08);border-top:3px solid var(--rope)}
+  .card h3{font-size:1.15rem;margin-bottom:.6rem;color:var(--navy);font-weight:600}
+  .card .big{font-size:2.4rem;color:var(--harbor);font-weight:700;font-family:'Helvetica Neue',Arial,sans-serif;line-height:1}
+  .card p{font-size:.95rem}
+
+  /* Hallway conceptual images (pure CSS/SVG) */
+  .hallway-img{width:100%;height:360px;border-radius:4px;overflow:hidden;box-shadow:0 8px 24px rgba(11,37,69,.25);position:relative}
+  .hallway-img img{width:100%;height:100%;object-fit:cover;display:block}
+  .caption{font-size:.85rem;color:var(--deep);margin-top:.5rem;font-style:italic;text-align:center}
+
+  /* Chart containers */
+  .chart-box{background:#fff;padding:1.5rem;border-radius:4px;box-shadow:0 4px 14px rgba(11,37,69,.08);border-top:3px solid var(--rope)}
+  .chart-box h3{color:var(--navy);font-size:1.1rem;margin-bottom:1rem;text-align:center}
+
+  /* Feature list */
+  ul.feature{list-style:none;padding:0}
+  ul.feature li{padding:.8rem 0 .8rem 2.2rem;position:relative;border-bottom:1px solid rgba(11,37,69,.08)}
+  ul.feature li::before{content:"⚓";position:absolute;left:0;color:var(--rope);font-size:1.2rem}
+  .bg-navy ul.feature li{border-bottom:1px solid rgba(232,238,245,.15)}
+
+  /* CTA */
+  .cta-row{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.5rem}
+  .btn{display:inline-block;padding:.9rem 1.8rem;background:var(--rope);color:var(--navy);text-decoration:none;font-family:'Helvetica Neue',Arial,sans-serif;font-weight:600;letter-spacing:.15em;text-transform:uppercase;font-size:.85rem;border-radius:2px;transition:transform .2s,box-shadow .2s;border:none;cursor:pointer}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.2)}
+  .btn.outline{background:transparent;color:var(--foam);border:2px solid var(--rope)}
+
+  /* Footer */
+  footer{background:var(--ink);color:var(--foam);padding:3rem 2rem;text-align:center}
+  footer .anchor-logo{stroke:var(--rope);width:48px;height:48px;margin-bottom:1rem}
+  footer a{color:var(--rope)}
+
+  /* Rope divider */
+  .rope-divider{height:14px;background:repeating-linear-gradient(45deg,var(--rope) 0 8px,var(--accent) 8px 16px);opacity:.8}
+
+  /* Quote */
+  blockquote{border-left:4px solid var(--rope);padding:1rem 1.5rem;margin:1.5rem 0;font-style:italic;color:var(--deep);background:rgba(255,255,255,.4)}
+  .bg-navy blockquote{background:rgba(255,255,255,.05);color:var(--foam)}
+
+  /* Timeline */
+  .timeline{position:relative;padding-left:2rem;border-left:3px dashed var(--rope)}
+  .timeline .step{margin-bottom:1.8rem;position:relative}
+  .timeline .step::before{content:"";position:absolute;left:-2.4rem;top:.3rem;width:18px;height:18px;border-radius:50%;background:var(--rope);border:3px solid var(--navy)}
+  .timeline h4{color:var(--rope);letter-spacing:.1em;text-transform:uppercase;font-size:.9rem;margin-bottom:.2rem}
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="brand">
+    <svg class="anchor-logo" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><line x1="12" y1="7.5" x2="12" y2="22"/><path d="M5 15 C 5 19, 9 22, 12 22 C 15 22, 19 19, 19 15"/><line x1="8" y1="10" x2="16" y2="10"/></svg>
+    Stoneboat Quay
+  </div>
+  <ul>
+    <li><a href="#vision">Vision</a></li>
+    <li><a href="#why">Why Now</a></li>
+    <li><a href="#value">Value Impact</a></li>
+    <li><a href="#market">GTA Market</a></li>
+    <li><a href="#designer">Clinton Design</a></li>
+    <li><a href="#faq">Questions</a></li>
+    <li><a href="Stoneboat_Quay_Handout.pdf" download>Download PDF</a></li>
+  </ul>
+</nav>
+
+<!-- SLIDE 1: HERO -->
+<section class="slide hero" id="top">
+  <div class="container">
+    <div class="tag">⚓  Stoneboat Quay Modernization  ⚓</div>
+    <h1>A Fresh Course for Our Harbour Home</h1>
+    <p class="sub">Modernizing our hallways and common areas — preserving the character, elevating the value, and charting Stoneboat Quay into its next generation.</p>
+    <div class="address">100 Bronte Road &nbsp;•&nbsp; 65 Units &nbsp;•&nbsp; Three Floors &nbsp;•&nbsp; On the Waterfront</div>
+    <div class="cta-row" style="justify-content:center;margin-top:2.5rem">
+      <a class="btn" href="#value">See the Value Impact</a>
+      <a class="btn outline" href="Stoneboat_Quay_Handout.pdf" download>Download Handout (PDF)</a>
+    </div>
+  </div>
+  <svg class="wave-divider" viewBox="0 0 1200 60" preserveAspectRatio="none"><path d="M0,30 Q150,60 300,30 T600,30 T900,30 T1200,30 V60 H0 Z" fill="#f4efe6"/></svg>
+</section>
+
+<div class="rope-divider"></div>
+
+<!-- SLIDE 2: VISION -->
+<section class="slide bg-sand" id="vision">
+  <div class="container">
+    <div class="eyebrow">The Vision</div>
+    <h2 class="section-title">Welcome Home to a Renewed Stoneboat Quay</h2>
+    <div class="rule"></div>
+    <div class="grid-2">
+      <div>
+        <p style="font-size:1.15rem;margin-bottom:1rem">Our hallways have served us well — but they have not been renovated in more than <strong>20 years</strong>. The finishes that greeted residents and guests two decades ago no longer reflect the quality of the homes behind the doors.</p>
+        <p style="margin-bottom:1rem">This modernization is a chance to refresh every corridor, every entrance, and every shared threshold with finishes that feel light, modern, and in keeping with our waterfront setting.</p>
+        <blockquote>"Buyers decide whether to buy within the first 60 seconds of entry." — Canadian condo market research, 2025-2026</blockquote>
+        <p>A lighter palette, updated lighting, new flooring, and refreshed doorways work together to tell every visitor — and every buyer — that this is a building that is cared for.</p>
+      </div>
+      <div>
+        <div class="hallway-img">
+          <img src="https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=1000&auto=format&fit=crop" alt="Modern condominium hallway with soft lighting and elegant doorways"
+               onerror="this.style.display='none';this.parentNode.innerHTML='<div style=&quot;width:100%;height:100%;background:linear-gradient(180deg,#1d4e89,#0b2545);display:flex;align-items:center;justify-content:center;color:#c9a66b;font-family:Helvetica;letter-spacing:.2em;&quot;>CONCEPTUAL HALLWAY</div>'">
+        </div>
+        <div class="caption">Conceptual: modernized corridor with layered lighting, neutral finishes, and refined entry thresholds</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 3: WHY NOW -->
+<section class="slide bg-navy" id="why">
+  <div class="container">
+    <div class="eyebrow">Why Now</div>
+    <h2 class="section-title">The GTA Market Rewards Buildings That Show Well</h2>
+    <div class="rule"></div>
+    <div class="grid-3">
+      <div class="card">
+        <div class="big">20+</div>
+        <h3>Years Since Hallway Renewal</h3>
+        <p>Our common-area finishes are now beyond their effective useful life. Appraisers flag this as an increase in <em>"effective age"</em> — pulling unit values down.</p>
+      </div>
+      <div class="card">
+        <div class="big">5–10%</div>
+        <h3>Typical Value Uplift</h3>
+        <p>Modernized lobbies and corridors are shown to lift perceived building value by 5–10% across comparable Canadian markets.</p>
+      </div>
+      <div class="card">
+        <div class="big">60%</div>
+        <h3>Faster Sales</h3>
+        <p>Well-presented, modernized units sell up to 60% faster — days-on-market dropping from ~38 days to roughly 14 in recent data.</p>
+      </div>
+    </div>
+    <blockquote style="margin-top:2.5rem">In the GTA's 2025–2026 market, "well-priced, well-presented listings continue to move efficiently," while dated buildings tend to underperform. Modernization is our hedge.</blockquote>
+  </div>
+</section>
+
+<!-- SLIDE 4: VALUE IMPACT + CHART -->
+<section class="slide bg-foam" id="value">
+  <div class="container">
+    <div class="eyebrow">The Numbers</div>
+    <h2 class="section-title">What Modernization Could Mean Per Unit</h2>
+    <div class="rule"></div>
+    <div class="grid-2">
+      <div class="chart-box">
+        <h3>Illustrative Equity Outcome per Unit</h3>
+        <canvas id="valueChart"></canvas>
+      </div>
+      <div>
+        <p style="margin-bottom:1rem">Based on a typical $600,000 Oakville/GTA condominium unit, a modernization-driven <strong>5% valuation uplift</strong> represents approximately <strong>$30,000</strong> in equity per owner.</p>
+        <ul class="feature">
+          <li><strong>Illustrative assessment:</strong> ~$8,000 per unit (industry-average range)</li>
+          <li><strong>Value uplift at 5%:</strong> ~$30,000 per $600k unit</li>
+          <li><strong>Net equity gain:</strong> ~$22,000 per unit</li>
+          <li><strong>Operational savings:</strong> 15–30% less on common-area lighting</li>
+        </ul>
+        <p style="font-size:.85rem;margin-top:1rem;font-style:italic">Figures are illustrative, based on market research for the Greater Toronto Area in 2025–2026. Actual assessment and uplift will be confirmed by the Board.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 5: GTA Market chart -->
+<section class="slide bg-sand" id="market">
+  <div class="container">
+    <div class="eyebrow">GTA &amp; Lake Ontario Market Context</div>
+    <h2 class="section-title">Buildings That Present Well Win</h2>
+    <div class="rule"></div>
+    <div class="grid-2">
+      <div>
+        <p style="margin-bottom:1rem">Across the Greater Toronto Area, condo inventory is near historic highs and buyers have more choice than ever. In this environment, the buildings that look <em>"fresh, modern, and thoughtfully upgraded"</em> sell — the dated ones sit.</p>
+        <p style="margin-bottom:1rem">In neighbouring Oakville, Burlington, and along the Toronto lakeshore, refreshed lobbies and hallways have become a standard buyer expectation, not a luxury.</p>
+        <ul class="feature">
+          <li>Toronto: modernized buildings <strong>maintain pricing</strong> while dated stock discounts 3–5% off-asking</li>
+          <li>Vancouver comparable: modernized units sold in <strong>14 days vs. 38</strong></li>
+          <li>New York cooperative data: renewed corridors add <strong>10–15%</strong> to apartment value</li>
+          <li>Dorchester case study: renovating "tired" hallways was <strong>100% helpful</strong> to resale for every owner</li>
+        </ul>
+      </div>
+      <div class="chart-box">
+        <h3>Days on Market — Modernized vs. Dated (Comparable Data)</h3>
+        <canvas id="domChart"></canvas>
+      </div>
+    </div>
+    <div class="grid-2" style="margin-top:2rem">
+      <div class="chart-box">
+        <h3>Common-Area Lighting Savings (Post-Retrofit)</h3>
+        <canvas id="energyChart"></canvas>
+      </div>
+      <div class="chart-box">
+        <h3>Projected Unit Value Uplift Range</h3>
+        <canvas id="upliftChart"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 6: WHAT YOU'LL SEE -->
+<section class="slide bg-navy" id="improvements">
+  <div class="container">
+    <div class="eyebrow">What You'll See</div>
+    <h2 class="section-title">The Modernization at a Glance</h2>
+    <div class="rule"></div>
+    <div class="grid-3">
+      <div>
+        <div class="hallway-img" style="height:240px">
+          <img src="https://images.unsplash.com/photo-1555636222-cae831e670b3?w=800&auto=format&fit=crop" alt="Bright modern corridor"
+               onerror="this.style.display='none';this.parentNode.innerHTML='<div style=&quot;width:100%;height:100%;background:linear-gradient(135deg,#13315c,#1d4e89);display:flex;align-items:center;justify-content:center;color:#c9a66b;&quot;>LIGHT &amp; AIRY</div>'">
+        </div>
+        <h3 style="margin-top:1rem;color:var(--rope)">Lighter, Warmer Corridors</h3>
+        <p>Neutral paint palette, layered LED lighting, and crisp new trim — making every floor feel brighter and more welcoming.</p>
+      </div>
+      <div>
+        <div class="hallway-img" style="height:240px">
+          <img src="https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?w=800&auto=format&fit=crop" alt="Elegant doorway entry"
+               onerror="this.style.display='none';this.parentNode.innerHTML='<div style=&quot;width:100%;height:100%;background:linear-gradient(135deg,#1d4e89,#0b2545);display:flex;align-items:center;justify-content:center;color:#c9a66b;&quot;>REFRESHED ENTRIES</div>'">
+        </div>
+        <h3 style="margin-top:1rem;color:var(--rope)">Refreshed Doorway Entrances</h3>
+        <p>Updated door hardware, refreshed unit numbers, and refined thresholds that give every home a proper welcome.</p>
+      </div>
+      <div>
+        <div class="hallway-img" style="height:240px">
+          <img src="https://images.unsplash.com/photo-1600210492493-0946911123ea?w=800&auto=format&fit=crop" alt="New LVP flooring in corridor"
+               onerror="this.style.display='none';this.parentNode.innerHTML='<div style=&quot;width:100%;height:100%;background:linear-gradient(135deg,#0b2545,#13315c);display:flex;align-items:center;justify-content:center;color:#c9a66b;&quot;>DURABLE FLOORING</div>'">
+        </div>
+        <h3 style="margin-top:1rem;color:var(--rope)">Durable, Modern Flooring</h3>
+        <p>Premium luxury vinyl plank or commercial-grade tile — quieter underfoot, easier to clean, and designed for the long haul.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 7: Designer spotlight -->
+<section class="slide bg-sand" id="designer">
+  <div class="container">
+    <div class="eyebrow">Our Design Partner</div>
+    <h2 class="section-title">Clinton Design Inc.</h2>
+    <div class="rule"></div>
+    <div class="grid-2">
+      <div>
+        <p style="font-size:1.15rem;margin-bottom:1rem;font-style:italic;color:var(--harbor)">"Clinton Design specializes in the refurbishment of condominium common elements throughout Toronto, the GTA and the surrounding areas."</p>
+        <p style="margin-bottom:1rem">Stoneboat Quay is partnering with <strong>Clinton Design Inc.</strong>, a Toronto-based interior design firm dedicated almost exclusively to the refurbishment of condominium common elements. Their portfolio spans buildings across Toronto and the Greater Toronto Area.</p>
+        <p style="margin-bottom:1rem">Through their Design-Build partner <strong>dot dot dot</strong>, Clinton Design can take our project from concept renderings through to completed construction — a single, coordinated team of designers and builders.</p>
+        <ul class="feature">
+          <li><strong>Specialty:</strong> Condominium common-element refurbishment</li>
+          <li><strong>Coverage:</strong> Toronto, the GTA, and surrounding areas</li>
+          <li><strong>Services:</strong> Before &amp; After design, 3D renderings, Design-Build delivery</li>
+          <li><strong>Philosophy:</strong> "Clean and quality work" — their construction partner's stated standard</li>
+          <li><strong>Studio:</strong> 6 Brentcliffe Road, Toronto</li>
+        </ul>
+        <div class="cta-row">
+          <a class="btn" href="https://clintondesign.ca" target="_blank" rel="noopener">Visit clintondesign.ca ↗</a>
+        </div>
+      </div>
+      <div>
+        <div class="hallway-img">
+          <img src="https://images.unsplash.com/photo-1505692433770-36f19f51681d?w=1000&auto=format&fit=crop" alt="Before and after hallway rendering concept"
+               onerror="this.style.display='none';this.parentNode.innerHTML='<div style=&quot;width:100%;height:100%;background:linear-gradient(135deg,#c9a66b,#13315c);display:flex;align-items:center;justify-content:center;color:#fff;font-family:Helvetica;letter-spacing:.2em;text-align:center;padding:1rem;&quot;>DESIGN &amp; RENDERING<br>CLINTON DESIGN INC.</div>'">
+        </div>
+        <div class="caption">Clinton Design delivers full before/after visualization so owners can see the transformation before work begins.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 8: Journey / Timeline -->
+<section class="slide bg-foam" id="journey">
+  <div class="container">
+    <div class="eyebrow">The Voyage Ahead</div>
+    <h2 class="section-title">What Happens Next</h2>
+    <div class="rule"></div>
+    <div class="timeline">
+      <div class="step"><h4>Stage 1 — Design &amp; Renderings</h4><p>Clinton Design prepares a full design concept with before/after renderings so every owner can see what the finished hallways will look like.</p></div>
+      <div class="step"><h4>Stage 2 — Owner Communication</h4><p>Unit owners receive renderings, finish samples, cost breakdowns, and a clear timeline. Questions are welcomed — nothing is hidden.</p></div>
+      <div class="step"><h4>Stage 3 — Phased Construction</h4><p>Work is scheduled floor-by-floor to keep disruption to a minimum. Residents always have a clear, safe path to their unit.</p></div>
+      <div class="step"><h4>Stage 4 — Reveal &amp; Value Reset</h4><p>Completed modernization "resets" the effective age of the building — and is reflected in the Status Certificate for every future sale.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 9: Documents + Contact -->
+<section class="slide bg-navy" id="faq">
+  <div class="container">
+    <div class="eyebrow">More Information</div>
+    <h2 class="section-title">Documents &amp; Contact</h2>
+    <div class="rule"></div>
+    <div class="grid-2">
+      <div class="card" style="background:rgba(255,255,255,.05);color:var(--foam);border-top-color:var(--rope)">
+        <h3 style="color:var(--rope)">Download the Handout</h3>
+        <p>A one-page PDF summarizing the modernization project — ideal for reading offline or sharing with family.</p>
+        <div class="cta-row">
+          <a class="btn" href="Stoneboat_Quay_Handout.pdf" download>Download PDF Handout ↓</a>
+        </div>
+      </div>
+      <div class="card" style="background:rgba(255,255,255,.05);color:var(--foam);border-top-color:var(--rope)">
+        <h3 style="color:var(--rope)">Questions?</h3>
+        <p>For any questions about the project, the schedule, or your individual assessment, please contact our building management company:</p>
+        <p style="margin-top:.8rem"><strong>CIE — Community Integrated Experience</strong></p>
+        <div class="cta-row">
+          <a class="btn" href="https://teamcie.ca" target="_blank" rel="noopener">Contact Management ↗</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="rope-divider"></div>
+
+<footer>
+  <svg class="anchor-logo" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><line x1="12" y1="7.5" x2="12" y2="22"/><path d="M5 15 C 5 19, 9 22, 12 22 C 15 22, 19 19, 19 15"/><line x1="8" y1="10" x2="16" y2="10"/></svg>
+  <div style="letter-spacing:.25em;text-transform:uppercase;font-size:.9rem;margin-bottom:.5rem">Stoneboat Quay</div>
+  <p style="opacity:.75;font-size:.9rem">100 Bronte Road · On the Harbour · Lake Ontario</p>
+  <p style="margin-top:1rem;font-size:.85rem;opacity:.7">Design &amp; supervision by <a href="https://clintondesign.ca" target="_blank">Clinton Design Inc.</a> · Management by <a href="https://teamcie.ca" target="_blank">CIE</a></p>
+</footer>
+
+<script>
+const navy='#0b2545', harbor='#1d4e89', rope='#c9a66b', accent='#d4b37a', sand='#f4efe6';
+
+// Value chart — bar
+new Chart(document.getElementById('valueChart'),{
+  type:'bar',
+  data:{labels:['Assessment Cost','Projected Value Uplift','Net Equity Gain'],
+    datasets:[{label:'CAD per unit (illustrative)',
+      data:[8000,30000,22000],
+      backgroundColor:[harbor,rope,navy],borderWidth:0}]},
+  options:{plugins:{legend:{display:false}},
+    scales:{y:{beginAtZero:true,ticks:{callback:v=>'$'+v.toLocaleString()}}}}
+});
+
+// DOM chart
+new Chart(document.getElementById('domChart'),{
+  type:'bar',
+  data:{labels:['Dated building','Modernized building'],
+    datasets:[{label:'Days on Market',data:[38,14],
+      backgroundColor:[harbor,rope],borderWidth:0}]},
+  options:{indexAxis:'y',plugins:{legend:{display:false}},
+    scales:{x:{beginAtZero:true,title:{display:true,text:'Days'}}}}
+});
+
+// Energy chart
+new Chart(document.getElementById('energyChart'),{
+  type:'doughnut',
+  data:{labels:['Energy saved (LED + sensors)','Remaining consumption'],
+    datasets:[{data:[25,75],backgroundColor:[rope,navy],borderWidth:0}]},
+  options:{plugins:{legend:{position:'bottom'},
+    title:{display:true,text:'Up to ~25% lighting savings typical'}}}
+});
+
+// Uplift chart
+new Chart(document.getElementById('upliftChart'),{
+  type:'line',
+  data:{labels:['Conservative','Expected','Strong','NYC comparable'],
+    datasets:[{label:'% Value Uplift',data:[5,7,10,15],
+      borderColor:rope,backgroundColor:'rgba(201,166,107,.2)',
+      fill:true,tension:.35,borderWidth:3,pointBackgroundColor:navy,pointRadius:6}]},
+  options:{plugins:{legend:{display:false}},
+    scales:{y:{beginAtZero:true,ticks:{callback:v=>v+'%'}}}}
+});
+</script>
+</body>
+</html>
