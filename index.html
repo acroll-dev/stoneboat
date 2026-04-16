@@ -31,7 +31,7 @@
   .hero{background:linear-gradient(135deg,var(--navy) 0%,var(--harbor) 100%);color:var(--foam);text-align:center;border-bottom:4px solid var(--rope)}
   .hero::before{content:"";position:absolute;inset:0;background-image:
     radial-gradient(circle at 20% 30%, rgba(201,166,107,.15), transparent 40%),
-    radial-gradient(circle at 80% 70%, rgba(232,238,245,.08), transparent 40%);}
+    radial-gradient(circle at 80% 70%, rgba(232,238,245,.08), transparent 40%);pointer-events:none}
   .hero h1{font-size:clamp(2.2rem,5vw,4rem);font-weight:300;margin-bottom:.6rem;position:relative}
   .hero .tag{font-size:1.1rem;letter-spacing:.25em;text-transform:uppercase;color:var(--rope);margin-bottom:2rem;position:relative}
   .hero .sub{font-size:1.3rem;max-width:700px;margin:0 auto 2rem;position:relative;font-style:italic}
@@ -60,11 +60,13 @@
   .card{background:#fff;padding:1.8rem;border-radius:4px;box-shadow:0 4px 14px rgba(11,37,69,.08);border-top:3px solid var(--rope)}
   .card h3{font-size:1.15rem;margin-bottom:.6rem;color:var(--navy);font-weight:600}
   .card .big{font-size:2.4rem;color:var(--harbor);font-weight:700;font-family:'Helvetica Neue',Arial,sans-serif;line-height:1}
-  .card p{font-size:.95rem}
+  .card p{font-size:.95rem;color:var(--ink)}
+  #faq .card p{color:var(--foam)}
 
   /* Hallway conceptual images (pure CSS/SVG) */
   .hallway-img{width:100%;height:360px;border-radius:4px;overflow:hidden;box-shadow:0 8px 24px rgba(11,37,69,.25);position:relative}
   .hallway-img img{width:100%;height:100%;object-fit:cover;display:block}
+  .hallway-img::after{content:"PLACEHOLDER — Replace";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Helvetica Neue',Arial,sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.85);background:rgba(11,37,69,.45);pointer-events:none;text-shadow:0 2px 6px rgba(0,0,0,.5)}
   .caption{font-size:.85rem;color:var(--deep);margin-top:.5rem;font-style:italic;text-align:center}
 
   /* Chart containers */
@@ -106,7 +108,7 @@
 
 <nav class="top">
   <div class="brand">
-    <svg class="anchor-logo" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><line x1="12" y1="7.5" x2="12" y2="22"/><path d="M5 15 C 5 19, 9 22, 12 22 C 15 22, 19 19, 19 15"/><line x1="8" y1="10" x2="16" y2="10"/></svg>
+    <span style="font-size:1.6rem;color:var(--rope)">⚓︎</span>
     Stoneboat Quay
   </div>
   <ul>
@@ -129,7 +131,7 @@
     <div class="address">100 Bronte Road &nbsp;•&nbsp; 65 Units &nbsp;•&nbsp; Three Floors &nbsp;•&nbsp; On the Waterfront</div>
     <div class="cta-row" style="justify-content:center;margin-top:2.5rem">
       <a class="btn" href="#value">See the Value Impact</a>
-      <a class="btn outline" href="Stoneboat_Quay_Handout.pdf" download>Download Handout (PDF)</a>
+      <a class="btn outline" href="#faq">Download Handout (PDF)</a>
     </div>
   </div>
   <svg class="wave-divider" viewBox="0 0 1200 60" preserveAspectRatio="none"><path d="M0,30 Q150,60 300,30 T600,30 T900,30 T1200,30 V60 H0 Z" fill="#f4efe6"/></svg>
@@ -145,7 +147,7 @@
     <div class="rule"></div>
     <div class="grid-2">
       <div>
-        <p style="font-size:1.15rem;margin-bottom:1rem">Our hallways have served us well — but they have not been renovated in more than <strong>20 years</strong>. The finishes that greeted residents and guests two decades ago no longer reflect the quality of the homes behind the doors.</p>
+        <p style="font-size:1.15rem;margin-bottom:1rem">Our hallways have served us well — but they were last renovated <strong>more than 12 years ago</strong>. The finishes that greeted residents and guests over a decade ago no longer reflect the quality of the homes behind the doors.</p>
         <p style="margin-bottom:1rem">This modernization is a chance to refresh every corridor, every entrance, and every shared threshold with finishes that feel light, modern, and in keeping with our waterfront setting.</p>
         <blockquote>"Buyers decide whether to buy within the first 60 seconds of entry." — Canadian condo market research, 2025-2026</blockquote>
         <p>A lighter palette, updated lighting, new flooring, and refreshed doorways work together to tell every visitor — and every buyer — that this is a building that is cared for.</p>
@@ -169,7 +171,7 @@
     <div class="rule"></div>
     <div class="grid-3">
       <div class="card">
-        <div class="big">20+</div>
+        <div class="big">12+</div>
         <h3>Years Since Hallway Renewal</h3>
         <p>Our common-area finishes are now beyond their effective useful life. Appraisers flag this as an increase in <em>"effective age"</em> — pulling unit values down.</p>
       </div>
@@ -236,9 +238,10 @@
       </div>
     </div>
     <div class="grid-2" style="margin-top:2rem">
-      <div class="chart-box">
+      <div class="chart-box" style="position:relative">
         <h3>Common-Area Lighting Savings (Post-Retrofit)</h3>
         <canvas id="energyChart"></canvas>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Helvetica Neue',Arial,sans-serif;font-size:1.6rem;font-weight:700;letter-spacing:.15em;color:rgba(11,37,69,.7);pointer-events:none">IF APPLICABLE</div>
       </div>
       <div class="chart-box">
         <h3>Projected Unit Value Uplift Range</h3>
@@ -277,7 +280,7 @@
                onerror="this.style.display='none';this.parentNode.innerHTML='<div style=&quot;width:100%;height:100%;background:linear-gradient(135deg,#0b2545,#13315c);display:flex;align-items:center;justify-content:center;color:#c9a66b;&quot;>DURABLE FLOORING</div>'">
         </div>
         <h3 style="margin-top:1rem;color:var(--rope)">Durable, Modern Flooring</h3>
-        <p>Premium luxury vinyl plank or commercial-grade tile — quieter underfoot, easier to clean, and designed for the long haul.</p>
+        <p>Attractive carpeting — quieter underfoot, easier to clean, and designed for the long haul.</p>
       </div>
     </div>
   </div>
@@ -293,7 +296,7 @@
       <div>
         <p style="font-size:1.15rem;margin-bottom:1rem;font-style:italic;color:var(--harbor)">"Clinton Design specializes in the refurbishment of condominium common elements throughout Toronto, the GTA and the surrounding areas."</p>
         <p style="margin-bottom:1rem">Stoneboat Quay is partnering with <strong>Clinton Design Inc.</strong>, a Toronto-based interior design firm dedicated almost exclusively to the refurbishment of condominium common elements. Their portfolio spans buildings across Toronto and the Greater Toronto Area.</p>
-        <p style="margin-bottom:1rem">Through their Design-Build partner <strong>dot dot dot</strong>, Clinton Design can take our project from concept renderings through to completed construction — a single, coordinated team of designers and builders.</p>
+        <p style="margin-bottom:1rem">[Through their Design-Build partner <strong>dot dot dot</strong>,] Clinton Design can take our project from concept renderings through to completed construction — a single, coordinated team of designers and builders, guided by Meryl Clinton, founder and owner, and Sarah Schuind, creative director.</p>
         <ul class="feature">
           <li><strong>Specialty:</strong> Condominium common-element refurbishment</li>
           <li><strong>Coverage:</strong> Toronto, the GTA, and surrounding areas</li>
@@ -355,9 +358,9 @@
       <div class="card" style="background:rgba(255,255,255,.05);color:var(--foam);border-top-color:var(--rope)">
         <h3 style="color:var(--rope)">Questions?</h3>
         <p>For any questions about the project, the schedule, or your individual assessment, please contact our building management company:</p>
-        <p style="margin-top:.8rem"><strong>CIE — Community Integrated Experience</strong></p>
+        <p style="margin-top:.8rem"><strong>Team CIE Property Management &amp; Consulting Inc.</strong><br>(905) 499-0998<br><a href="mailto:info@teamcie.ca" style="color:var(--rope)">info@teamcie.ca</a></p>
         <div class="cta-row">
-          <a class="btn" href="https://teamcie.ca" target="_blank" rel="noopener">Contact Management ↗</a>
+          <a class="btn" href="mailto:info@teamcie.ca?subject=HCC185%20Common%20Element%20Renovations">Contact Management ↗</a>
         </div>
       </div>
     </div>
@@ -367,7 +370,7 @@
 <div class="rope-divider"></div>
 
 <footer>
-  <svg class="anchor-logo" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><line x1="12" y1="7.5" x2="12" y2="22"/><path d="M5 15 C 5 19, 9 22, 12 22 C 15 22, 19 19, 19 15"/><line x1="8" y1="10" x2="16" y2="10"/></svg>
+  <span style="font-size:2.4rem;color:var(--rope)">⚓︎</span>
   <div style="letter-spacing:.25em;text-transform:uppercase;font-size:.9rem;margin-bottom:.5rem">Stoneboat Quay</div>
   <p style="opacity:.75;font-size:.9rem">100 Bronte Road · On the Harbour · Lake Ontario</p>
   <p style="margin-top:1rem;font-size:.85rem;opacity:.7">Design &amp; supervision by <a href="https://clintondesign.ca" target="_blank">Clinton Design Inc.</a> · Management by <a href="https://teamcie.ca" target="_blank">CIE</a></p>
